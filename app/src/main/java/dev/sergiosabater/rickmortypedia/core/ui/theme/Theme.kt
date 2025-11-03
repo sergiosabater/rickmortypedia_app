@@ -1,4 +1,4 @@
-package dev.sergiosabater.rickmortypedia.ui.theme
+package dev.sergiosabater.rickmortypedia.core.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

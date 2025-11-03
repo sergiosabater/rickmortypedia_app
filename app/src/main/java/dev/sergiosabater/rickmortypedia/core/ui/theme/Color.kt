@@ -1,4 +1,4 @@
-package dev.sergiosabater.rickmortypedia.ui.theme
+package dev.sergiosabater.rickmortypedia.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
