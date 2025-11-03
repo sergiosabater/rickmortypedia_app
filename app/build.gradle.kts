@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
+    implementation(libs.coil.compose)
     ksp(libs.room.compiler)
     testImplementation(libs.junit)
     testImplementation(libs.koin.test)
