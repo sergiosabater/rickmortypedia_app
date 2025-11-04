@@ -6,9 +6,12 @@ import coil.ImageLoaderFactory
 import coil.disk.DiskCache
 import dev.sergiosabater.rickmortypedia.core.di.coilModule
 import dev.sergiosabater.rickmortypedia.core.di.databaseModule
+import dev.sergiosabater.rickmortypedia.core.di.navigationModule
 import dev.sergiosabater.rickmortypedia.core.di.networkModule
 import dev.sergiosabater.rickmortypedia.core.di.repositoryModule
+import dev.sergiosabater.rickmortypedia.core.di.uiModule
 import dev.sergiosabater.rickmortypedia.core.di.useCaseModule
+import dev.sergiosabater.rickmortypedia.core.di.viewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -29,7 +32,10 @@ class RickMortyPediaApp : Application(), ImageLoaderFactory {
                 databaseModule,
                 repositoryModule,
                 useCaseModule,
-                coilModule
+                coilModule,
+                uiModule,
+                viewModelModule,
+                navigationModule
             )
         }
     }
