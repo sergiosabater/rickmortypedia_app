@@ -64,6 +64,7 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.datastore.core)
     implementation(libs.androidx.datastore.preferences.core)
+    implementation(libs.compose.ui.icons.extended)
     ksp(libs.room.compiler)
     testImplementation(libs.junit)
     testImplementation(libs.koin.test)
