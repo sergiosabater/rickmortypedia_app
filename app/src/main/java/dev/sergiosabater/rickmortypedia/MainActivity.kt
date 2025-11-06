@@ -3,26 +3,40 @@ package dev.sergiosabater.rickmortypedia
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import dev.sergiosabater.rickmortypedia.ui.theme.RickmortypediaTheme
+import dev.sergiosabater.rickmortypedia.core.navigation.AppNavHost
+import dev.sergiosabater.rickmortypedia.core.navigation.AppNavigator
+import dev.sergiosabater.rickmortypedia.core.ui.theme.RickMortyPediaTheme
+import dev.sergiosabater.rickmortypedia.core.ui.theme.ThemeManager
+import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
+
+    private val navigator: AppNavigator by inject()
+    private val themeManager: ThemeManager by inject()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
-            RickmortypediaTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
+            val isDarkTheme by themeManager.isDarkTheme.collectAsState()
+            val systemDarkTheme = isSystemInDarkTheme()
+            val useDarkTheme = isDarkTheme ?: systemDarkTheme
+
+            RickMortyPediaTheme(darkTheme = useDarkTheme) {
+                Surface(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    AppNavHost(
+                        navigator = navigator,
+                        isDarkTheme = isDarkTheme,
+                        onThemeToggle = { themeManager.toggleTheme() }
                     )
                 }
             }
@@ -30,18 +44,9 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    RickmortypediaTheme {
-        Greeting("Android")
+    RickMortyPediaTheme {
     }
 }
