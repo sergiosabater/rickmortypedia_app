@@ -1,5 +1,6 @@
 package dev.sergiosabater.rickmortypedia
 
+import android.app.Activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,9 +9,12 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.sergiosabater.rickmortypedia.core.navigation.AppNavHost
 import dev.sergiosabater.rickmortypedia.core.navigation.AppNavigator
@@ -33,6 +37,17 @@ class MainActivity : ComponentActivity() {
             val useDarkTheme = isDarkTheme ?: systemDarkTheme
 
             RickMortyPediaTheme(darkTheme = useDarkTheme) {
+                // Dynamic status bar color configuration
+                val view = LocalView.current
+                SideEffect {
+                    if (!view.isInEditMode) {
+                        val window = (view.context as Activity).window
+                        WindowCompat.getInsetsController(window, view).apply {
+                            isAppearanceLightStatusBars = !useDarkTheme
+                        }
+                    }
+                }
+
                 Surface(
                     modifier = Modifier.fillMaxSize()
                 ) {

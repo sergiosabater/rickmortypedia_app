@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -218,9 +217,10 @@ private fun CharacterDetailBody(
         CharacterDetailHeader(character = character)
         CharacterInfoSection(character = character)
         CharacterLocationsSection(character = character)
-        CharacterEpisodesSection(character = character)
-
-        Spacer(modifier = Modifier.height(16.dp))
+        CharacterEpisodesSection(
+            modifier = Modifier.padding(bottom = 16.dp),
+            character = character,
+        )
     }
 }
 
@@ -255,7 +255,7 @@ private fun CharacterInfoSection(character: Character) {
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .clickable { isExpanded = !isExpanded },
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
         )
@@ -336,7 +336,7 @@ private fun CharacterLocationsSection(character: Character) {
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .clickable { isExpanded = !isExpanded },
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
         )
@@ -390,15 +390,18 @@ private fun CharacterLocationsSection(character: Character) {
 }
 
 @Composable
-private fun CharacterEpisodesSection(character: Character) {
+private fun CharacterEpisodesSection(
+    modifier: Modifier = Modifier,
+    character: Character,
+) {
     var isExpanded by remember { mutableStateOf(false) }
 
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .clickable { isExpanded = !isExpanded },
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
         )
@@ -498,32 +501,31 @@ private fun ErrorDetailState(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
+            modifier = Modifier
+                .size(64.dp)
+                .padding(bottom = 16.dp),
             imageVector = Icons.Default.Close,
             contentDescription = "Error",
-            tint = MaterialTheme.colorScheme.error,
-            modifier = Modifier.size(64.dp)
+            tint = MaterialTheme.colorScheme.error
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
-
         Text(
-            text = "Error al cargar el personaje",
+            text = "Error loading character",
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface
         )
 
         Text(
+            modifier = Modifier.padding(horizontal = 32.dp, vertical = 8.dp),
             text = errorMessage,
             fontSize = 14.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 32.dp, vertical = 8.dp)
+            textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
-
         Row(
+            modifier = Modifier.padding(top = 24.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Button(

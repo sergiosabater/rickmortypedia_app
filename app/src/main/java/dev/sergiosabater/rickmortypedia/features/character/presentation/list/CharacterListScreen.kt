@@ -8,12 +8,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -152,7 +150,6 @@ private fun SuccessState(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .statusBarsPadding()
     ) {
         HeaderSection(
             isDarkTheme = isDarkTheme,
@@ -164,18 +161,16 @@ private fun SuccessState(
             onQueryChange = onSearchQueryChange,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
+                .padding(start = 16.dp, end = 16.dp, bottom = 24.dp)
         )
-
-        Spacer(modifier = Modifier.height(24.dp))
 
         SpeciesFilterBar(
             selectedSpecies = selectedSpecies,
             onSpeciesSelected = onSpeciesSelected,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 24.dp)
         )
-
-        Spacer(modifier = Modifier.height(24.dp))
 
         CharactersList(
             characters = characters,
@@ -190,27 +185,32 @@ private fun HeaderSection(
     isDarkTheme: Boolean?,
     onThemeToggle: () -> Unit
 ) {
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 16.dp, bottom = 16.dp)
+            .padding(top = 0.dp, bottom = 16.dp)
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_logo),
-            contentDescription = "Rick and Morty Logo",
-            contentScale = ContentScale.Fit,
-            modifier = Modifier
-                .padding(top = 16.dp)
-                .align(Alignment.Center)
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            ThemeToggleButton(
+                isDarkTheme = isDarkTheme ?: false,
+                onToggle = onThemeToggle,
+                modifier = Modifier.padding(end = 4.dp)
+            )
+        }
 
-        ThemeToggleButton(
-            isDarkTheme = isDarkTheme ?: false,
-            onToggle = onThemeToggle,
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(top = 8.dp, end = 16.dp)
-        )
+        Box(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_logo),
+                contentDescription = "Rick and Morty Logo",
+                contentScale = ContentScale.Fit,
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
     }
 }
 
@@ -223,11 +223,9 @@ private fun CharactersList(
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(
-            start = 16.dp,
-            end = 16.dp,
             bottom = 16.dp
         ),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         items(
             items = characters,
