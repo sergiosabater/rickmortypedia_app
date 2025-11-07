@@ -7,10 +7,10 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.sergiosabater.rickmortypedia.core.navigation.AppNavHost
 import dev.sergiosabater.rickmortypedia.core.navigation.AppNavigator
 import dev.sergiosabater.rickmortypedia.core.ui.theme.RickMortyPediaTheme
@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val isDarkTheme by themeManager.isDarkTheme.collectAsState()
+            val isDarkTheme by themeManager.isDarkTheme.collectAsStateWithLifecycle()
             val systemDarkTheme = isSystemInDarkTheme()
             val useDarkTheme = isDarkTheme ?: systemDarkTheme
 

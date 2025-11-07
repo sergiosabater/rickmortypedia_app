@@ -13,6 +13,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,17 +23,33 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.sergiosabater.rickmortypedia.R
 import dev.sergiosabater.rickmortypedia.core.ui.theme.RickMortyPediaTheme
 import kotlinx.coroutines.delay
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SplashScreen(
+    onLoadingComplete: () -> Unit,
+    onError: () -> Unit,
+    viewModel: SplashViewModel = koinViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    SplashContent(
+        uiState = uiState,
+        onLoadingComplete = onLoadingComplete,
+        onError = onError
+    )
+}
+
+@Composable
+private fun SplashContent(
     uiState: SplashUiState,
     onLoadingComplete: () -> Unit,
     onError: () -> Unit
 ) {
-
     LaunchedEffect(uiState) {
         when (uiState) {
             is SplashUiState.Success -> {
@@ -89,11 +106,10 @@ fun SplashScreen(
 @Composable
 fun PreviewSplashScreenLoading() {
     RickMortyPediaTheme {
-        SplashScreen(
+        SplashContent(
             uiState = SplashUiState.Loading,
             onLoadingComplete = {},
             onError = {}
         )
     }
 }
-

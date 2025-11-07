@@ -66,29 +66,49 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import dev.sergiosabater.rickmortypedia.features.character.domain.model.Character
-import dev.sergiosabater.rickmortypedia.features.character.domain.model.CharacterStatus
 import dev.sergiosabater.rickmortypedia.core.ui.theme.RickAndMortyFontFamily
 import dev.sergiosabater.rickmortypedia.core.ui.theme.RickMortyPediaTheme
 import dev.sergiosabater.rickmortypedia.core.ui.theme.StatusAlive
 import dev.sergiosabater.rickmortypedia.core.ui.theme.StatusDead
 import dev.sergiosabater.rickmortypedia.core.ui.theme.StatusUnknown
+import dev.sergiosabater.rickmortypedia.features.character.domain.model.Character
+import dev.sergiosabater.rickmortypedia.features.character.domain.model.CharacterStatus
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun CharacterDetailScreen(
-    uiState: CharacterDetailUiState,
+    characterId: Int,
     onBackClick: () -> Unit,
-    onRetry: () -> Unit
+    viewModel: CharacterDetailViewModel = koinViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var shouldAnimate by remember { mutableStateOf(false) }
 
-    var contentVisible by remember { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-        contentVisible = true
+    LaunchedEffect(characterId) {
+        viewModel.handleIntent(CharacterDetailIntent.LoadCharacter(characterId))
+        shouldAnimate = true
     }
 
+    CharacterDetailContent(
+        uiState = uiState,
+        onBackClick = onBackClick,
+        onRetry = {
+            viewModel.handleIntent(CharacterDetailIntent.RetryLoad)
+        },
+        shouldAnimate = shouldAnimate
+    )
+}
+
+@Composable
+private fun CharacterDetailContent(
+    uiState: CharacterDetailUiState,
+    onBackClick: () -> Unit,
+    onRetry: () -> Unit,
+    shouldAnimate: Boolean
+) {
     Scaffold(
         topBar = {
             CharacterDetailTopBar(
@@ -103,7 +123,7 @@ fun CharacterDetailScreen(
     ) { paddingValues ->
 
         AnimatedVisibility(
-            visible = contentVisible,
+            visible = shouldAnimate,
             enter = slideInHorizontally(
                 animationSpec = tween(durationMillis = 400, easing = FastOutSlowInEasing)
             ) + fadeIn(
@@ -135,7 +155,7 @@ fun CharacterDetailScreen(
 
                 is CharacterDetailUiState.Success -> {
                     val character = uiState.character
-                    CharacterDetailContent(
+                    CharacterDetailBody(
                         character = character,
                         modifier = Modifier.padding(paddingValues)
                     )
@@ -147,7 +167,7 @@ fun CharacterDetailScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CharacterDetailTopBar(
+private fun CharacterDetailTopBar(
     characterName: String,
     onBackClick: () -> Unit
 ) {
@@ -180,7 +200,7 @@ fun CharacterDetailTopBar(
 }
 
 @Composable
-fun CharacterDetailContent(
+private fun CharacterDetailBody(
     character: Character,
     modifier: Modifier = Modifier
 ) {
@@ -201,7 +221,7 @@ fun CharacterDetailContent(
 }
 
 @Composable
-fun CharacterDetailHeader(character: Character) {
+private fun CharacterDetailHeader(character: Character) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -223,7 +243,7 @@ fun CharacterDetailHeader(character: Character) {
 }
 
 @Composable
-fun CharacterInfoSection(character: Character) {
+private fun CharacterInfoSection(character: Character) {
     var isExpanded by remember { mutableStateOf(false) }
 
     Card(
@@ -304,7 +324,7 @@ fun CharacterInfoSection(character: Character) {
 }
 
 @Composable
-fun CharacterLocationsSection(character: Character) {
+private fun CharacterLocationsSection(character: Character) {
     var isExpanded by remember { mutableStateOf(false) }
 
     Card(
@@ -366,7 +386,7 @@ fun CharacterLocationsSection(character: Character) {
 }
 
 @Composable
-fun CharacterEpisodesSection(character: Character) {
+private fun CharacterEpisodesSection(character: Character) {
     var isExpanded by remember { mutableStateOf(false) }
 
     Card(
@@ -422,7 +442,7 @@ fun CharacterEpisodesSection(character: Character) {
 }
 
 @Composable
-fun InfoRow(
+private fun InfoRow(
     label: String,
     value: String,
     icon: ImageVector,
@@ -460,7 +480,7 @@ fun InfoRow(
 }
 
 @Composable
-fun ErrorDetailState(
+private fun ErrorDetailState(
     errorMessage: String,
     onRetry: () -> Unit,
     onBackClick: () -> Unit,
@@ -549,7 +569,7 @@ fun PreviewCharacterDetailScreen() {
                 )
             }
         ) { paddingValues ->
-            CharacterDetailContent(
+            CharacterDetailBody(
                 character = sampleCharacter,
                 modifier = Modifier.padding(paddingValues)
             )

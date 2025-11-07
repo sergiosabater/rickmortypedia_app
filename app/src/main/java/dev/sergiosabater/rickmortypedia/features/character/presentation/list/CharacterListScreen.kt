@@ -16,12 +16,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -35,6 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.sergiosabater.rickmortypedia.R
 import dev.sergiosabater.rickmortypedia.features.character.domain.model.Character
 import dev.sergiosabater.rickmortypedia.features.character.domain.model.CharacterStatus
@@ -42,9 +43,30 @@ import dev.sergiosabater.rickmortypedia.features.character.presentation.list.com
 import dev.sergiosabater.rickmortypedia.features.character.presentation.list.components.CustomSearchBar
 import dev.sergiosabater.rickmortypedia.features.character.presentation.list.components.SpeciesFilter
 import dev.sergiosabater.rickmortypedia.features.character.presentation.list.components.SpeciesFilterBar
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun CharactersListScreen(
+    onCharacterClick: (Character) -> Unit,
+    isDarkTheme: Boolean?,
+    onThemeToggle: () -> Unit,
+    viewModel: CharactersListViewModel = koinViewModel()
+) {
+    val filteredCharacters by viewModel.filteredCharacters.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    CharactersListContent(
+        characters = filteredCharacters,
+        uiState = uiState,
+        onIntent = viewModel::processIntent,
+        onCharacterClick = onCharacterClick,
+        isDarkTheme = isDarkTheme,
+        onThemeToggle = onThemeToggle
+    )
+}
+
+@Composable
+private fun CharactersListContent(
     characters: List<Character>,
     uiState: CharactersListUiState,
     onIntent: (CharactersListIntent) -> Unit,
@@ -309,30 +331,6 @@ fun CharactersListScreenPreview() {
             location = "Citadel of Ricks",
             image = "https://rickandmortyapi.com/api/character/avatar/2.jpeg",
             episodeCount = 51
-        ),
-        Character(
-            id = 3,
-            name = "Summer Smith",
-            status = CharacterStatus.ALIVE,
-            species = "Human",
-            type = "",
-            gender = "Female",
-            origin = "Earth (Replacement Dimension)",
-            location = "Earth (Replacement Dimension)",
-            image = "https://rickandmortyapi.com/api/character/avatar/3.jpeg",
-            episodeCount = 42
-        ),
-        Character(
-            id = 4,
-            name = "Beth Smith",
-            status = CharacterStatus.ALIVE,
-            species = "Human",
-            type = "",
-            gender = "Female",
-            origin = "Earth (Replacement Dimension)",
-            location = "Earth (Replacement Dimension)",
-            image = "https://rickandmortyapi.com/api/character/avatar/4.jpeg",
-            episodeCount = 42
         )
     )
 
@@ -343,7 +341,7 @@ fun CharactersListScreenPreview() {
     )
 
     MaterialTheme {
-        CharactersListScreen(
+        CharactersListContent(
             characters = sampleCharacters,
             uiState = uiState,
             onIntent = {},
@@ -353,46 +351,3 @@ fun CharactersListScreenPreview() {
         )
     }
 }
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun CharactersListScreenErrorPreview() {
-    val uiState = CharactersListUiState(
-        searchQuery = "",
-        selectedSpecies = SpeciesFilter.ALL,
-        uiStatus = CharactersListUiStatus.Error
-    )
-
-    MaterialTheme {
-        CharactersListScreen(
-            characters = emptyList(),
-            uiState = uiState,
-            onIntent = {},
-            onCharacterClick = {},
-            isDarkTheme = false,
-            onThemeToggle = {}
-        )
-    }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun CharactersListScreenEmptyPreview() {
-    val uiState = CharactersListUiState(
-        searchQuery = "Nonexistent Character",
-        selectedSpecies = SpeciesFilter.ALL,
-        uiStatus = CharactersListUiStatus.Success
-    )
-
-    MaterialTheme {
-        CharactersListScreen(
-            characters = emptyList(),
-            uiState = uiState,
-            onIntent = {},
-            onCharacterClick = {},
-            isDarkTheme = false,
-            onThemeToggle = {}
-        )
-    }
-}
-
