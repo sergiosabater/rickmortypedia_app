@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,7 +49,7 @@ fun ErrorScreen(
 
                 Icon(
                     imageVector = Icons.Filled.Close,
-                    contentDescription = "Close App",
+                    contentDescription = stringResource(R.string.close_app),
                     tint = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier
                         .align(Alignment.TopEnd)
@@ -64,12 +65,12 @@ fun ErrorScreen(
                 ) {
                     Image(
                         painter = painterResource(R.drawable.error),
-                        contentDescription = "Error",
+                        contentDescription = stringResource(R.string.error),
                         modifier = Modifier.size(200.dp)
                     )
 
                     Text(
-                        text = "Oops! Something went wrong",
+                        text = stringResource(R.string.oops_something_went_wrong),
                         color = MaterialTheme.colorScheme.onBackground, // Usar color del tema
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
@@ -80,11 +81,11 @@ fun ErrorScreen(
                         onClick = onRetry,
                         modifier = Modifier.width(200.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary, // Usar color primario del tema
+                            containerColor = MaterialTheme.colorScheme.primary,
                             contentColor = MaterialTheme.colorScheme.onPrimary
                         )
                     ) {
-                        Text("Try Again", fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.try_again), fontWeight = FontWeight.Bold)
                     }
                 }
             }

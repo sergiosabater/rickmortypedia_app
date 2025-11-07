@@ -18,14 +18,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.sergiosabater.rickmortypedia.R
 
 @Composable
 fun SpeciesFilterChip(
     modifier: Modifier = Modifier,
-    species: String,
+    speciesFilter: SpeciesFilter,
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
@@ -77,7 +79,7 @@ fun SpeciesFilterChip(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = species,
+            text = stringResource(speciesFilter.displayNameRes),
             color = textColor,
             fontSize = 14.sp,
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
@@ -86,11 +88,11 @@ fun SpeciesFilterChip(
 }
 
 //Species available in the filter
-enum class SpeciesFilter(val displayName: String, val filterValue: String?) {
-    ALL("All", null),
-    HUMAN("Human", "Human"),
-    ALIEN("Alien", "Alien"),
-    HUMANOID("Humanoid", "Humanoid"),
-    ROBOT("Robot", "Robot"),
-    ANIMAL("Animal", "Animal");
+enum class SpeciesFilter(val displayNameRes: Int, val filterValue: String?) {
+    ALL(R.string.species_filter_all, null),
+    HUMAN(R.string.species_filter_human, "Human"),
+    ALIEN(R.string.species_filter_alien, "Alien"),
+    HUMANOID(R.string.species_filter_humanoid, "Humanoid"),
+    ROBOT(R.string.species_filter_robot, "Robot"),
+    ANIMAL(R.string.species_filter_animal, "Animal");
 }

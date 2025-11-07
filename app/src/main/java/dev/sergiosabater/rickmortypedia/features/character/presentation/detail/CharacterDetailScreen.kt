@@ -61,6 +61,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -69,6 +70,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import dev.sergiosabater.rickmortypedia.R
 import dev.sergiosabater.rickmortypedia.core.ui.theme.RickAndMortyFontFamily
 import dev.sergiosabater.rickmortypedia.core.ui.theme.RickMortyPediaTheme
 import dev.sergiosabater.rickmortypedia.core.ui.theme.StatusAlive
@@ -115,7 +117,7 @@ private fun CharacterDetailContent(
                 characterName = if (uiState is CharacterDetailUiState.Success) {
                     uiState.character.name
                 } else {
-                    "Character Details"
+                    stringResource(R.string.character_details)
                 },
                 onBackClick = onBackClick
             )
@@ -187,7 +189,7 @@ private fun CharacterDetailTopBar(
             IconButton(onClick = onBackClick) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
+                    contentDescription = stringResource(R.string.back),
                     tint = MaterialTheme.colorScheme.onSurface
                 )
             }
@@ -237,7 +239,7 @@ private fun CharacterDetailHeader(character: Character) {
                 .data(character.image)
                 .crossfade(true)
                 .build(),
-            contentDescription = "Imagen de ${character.name}",
+            contentDescription = stringResource(R.string.image_of, character.name),
             modifier = Modifier
                 .fillMaxSize()
                 .clip(RoundedCornerShape(12.dp)),
@@ -269,7 +271,7 @@ private fun CharacterInfoSection(character: Character) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Character Info",
+                    text = stringResource(R.string.character_info),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -277,7 +279,11 @@ private fun CharacterInfoSection(character: Character) {
 
                 Icon(
                     imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = if (isExpanded) "Collapse" else "Expand",
+                    contentDescription = if (isExpanded)
+                        stringResource(R.string.collapse)
+                    else
+                        stringResource(R.string.expand)
+                    ,
                     tint = MaterialTheme.colorScheme.onSurface
                 )
             }
@@ -292,7 +298,7 @@ private fun CharacterInfoSection(character: Character) {
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     InfoRow(
-                        label = "State",
+                        label = stringResource(R.string.state),
                         value = character.status.name,
                         icon = Icons.Default.Favorite,
                         statusColor = when (character.status) {
@@ -303,20 +309,20 @@ private fun CharacterInfoSection(character: Character) {
                     )
 
                     InfoRow(
-                        label = "Specie",
-                        value = character.species.ifEmpty { "Unknown" },
+                        label = stringResource(R.string.specie),
+                        value = character.species.ifEmpty { stringResource(R.string.unknown) },
                         icon = Icons.Default.Person
                     )
 
                     InfoRow(
-                        label = "Gender",
-                        value = character.gender.ifEmpty { "Unknown" },
+                        label = stringResource(R.string.gender),
+                        value = character.gender.ifEmpty { stringResource(R.string.unknown_value) },
                         icon = Icons.Default.Face
                     )
 
                     if (character.type.isNotEmpty()) {
                         InfoRow(
-                            label = "Type",
+                            label = stringResource(R.string.type),
                             value = character.type,
                             icon = Icons.Default.Info
                         )
@@ -350,7 +356,7 @@ private fun CharacterLocationsSection(character: Character) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Locations",
+                    text = stringResource(R.string.locations),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -358,7 +364,9 @@ private fun CharacterLocationsSection(character: Character) {
 
                 Icon(
                     imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = if (isExpanded) "Collapse" else "Expand",
+                    contentDescription = if (isExpanded) stringResource(R.string.collapse_description) else
+                        stringResource(R.string.expand_value)
+                    ,
                     tint = MaterialTheme.colorScheme.onSurface
                 )
             }
@@ -373,14 +381,14 @@ private fun CharacterLocationsSection(character: Character) {
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     InfoRow(
-                        label = "Origin",
-                        value = character.origin.ifEmpty { "Unknown" },
+                        label = stringResource(R.string.origin),
+                        value = character.origin.ifEmpty { stringResource(R.string.unknown_value) },
                         icon = Icons.Default.Place
                     )
 
                     InfoRow(
-                        label = "Current location",
-                        value = character.location.ifEmpty { "Unknown" },
+                        label = stringResource(R.string.current_location),
+                        value = character.location.ifEmpty { stringResource(R.string.unknown_value) },
                         icon = Icons.Default.LocationOn
                     )
                 }
@@ -415,7 +423,7 @@ private fun CharacterEpisodesSection(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Episodes",
+                    text = stringResource(R.string.episodes),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -423,7 +431,10 @@ private fun CharacterEpisodesSection(
 
                 Icon(
                     imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = if (isExpanded) "Collapse" else "Expand",
+                    contentDescription = if (isExpanded) stringResource(R.string.collapse_value)
+                    else
+                        stringResource(R.string.expand_value)
+                    ,
                     tint = MaterialTheme.colorScheme.onSurface
                 )
             }
@@ -438,7 +449,7 @@ private fun CharacterEpisodesSection(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Text(
-                        text = "Appears in ${character.episodeCount} episodes",
+                        text = stringResource(R.string.appears_in_episodes, character.episodeCount),
                         fontSize = 16.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -505,12 +516,12 @@ private fun ErrorDetailState(
                 .size(64.dp)
                 .padding(bottom = 16.dp),
             imageVector = Icons.Default.Close,
-            contentDescription = "Error",
+            contentDescription = stringResource(R.string.error),
             tint = MaterialTheme.colorScheme.error
         )
 
         Text(
-            text = "Error loading character",
+            text = stringResource(R.string.error_loading_character),
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface
@@ -535,14 +546,14 @@ private fun ErrorDetailState(
                 )
             ) {
                 Text(
-                    "Retry",
+                    stringResource(R.string.retry),
                     color = MaterialTheme.colorScheme.onPrimary
                 )
             }
 
             TextButton(onClick = onBackClick) {
                 Text(
-                    "Back",
+                    stringResource(R.string.back),
                     color = MaterialTheme.colorScheme.primary
                 )
             }
