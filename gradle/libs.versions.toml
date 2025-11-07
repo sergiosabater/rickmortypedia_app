@@ -74,7 +74,58 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 [bundles]
+androidx-core = [
+    "androidx-core-ktx",
+    "androidx-lifecycle-runtime-ktx",
+    "androidx-activity-compose"
+]
+
+compose-ui = [
+    "androidx-compose-ui",
+    "androidx-compose-ui-graphics",
+    "androidx-compose-ui-tooling-preview",
+    "androidx-compose-material3",
+    "compose-ui-icons-extended",
+    "androidx-navigation-compose"
+]
+
+room = [
+    "room-runtime",
+    "room-ktx"
+]
+
+ktor-client = [
+    "ktor-client-core",
+    "ktor-client-android",
+    "ktor-client-serialization",
+    "ktor-client-logging",
+    "ktor-client-content-negotiation",
+    "ktor-serialization-kotlinx-json"
+]
+
+koin = [
+    "koin-android",
+    "koin-androidx-compose"
+]
+
+coil = [
+    "coil-compose"
+]
+
+datastore = [
+    "androidx-datastore-preferences",
+    "androidx-datastore-core",
+    "androidx-datastore-preferences-core"
+]
+
+kotlinx-serialization = [
+    "kotlinx-serialization-json"
+]
+
 unit-testing = [
+    "junit",
+    "koin-test",
+    "koin-test-junit4",
     "mockito-kotlin",
     "mockito-inline",
     "turbine",
@@ -82,3 +133,13 @@ unit-testing = [
     "arch-core-testing"
 ]
 
+testing-android = [
+    "androidx-junit",
+    "androidx-espresso-core",
+    "androidx-compose-ui-test-junit4"
+]
+
+debug-compose = [
+    "androidx-compose-ui-tooling",
+    "androidx-compose-ui-test-manifest"
+]
