@@ -36,10 +36,11 @@ From the genius scientist **Rick Sanchez** to his anxious grandson **Morty Smith
 ## 📸 Screenshots
 
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/bb21bdd8-bb2e-4c51-b8e5-18ca36ea3e5a" width="250" alt="Main Screen"> &nbsp;&nbsp;
-  <img src="https://github.com/user-attachments/assets/20f6475f-1154-4a5a-bcfb-1efd7606cd58" width="250" alt="Character Detail"> &nbsp;&nbsp;
-  <img src="https://github.com/user-attachments/assets/7b0a629a-df6c-4156-b407-f743aa5c9640" width="250" alt="Character Detail"> &nbsp;&nbsp;
+  <img src="https://github.com/user-attachments/assets/2b33ffcd-3cac-4b07-b9dc-49bc63f5eb87" width="250" alt="Main Screen"> &nbsp;&nbsp;
+  <img src="https://github.com/user-attachments/assets/ceb844ba-c506-4924-b996-3c731993079d" width="250" alt="Character Detail"> &nbsp;&nbsp;
+  <img src="https://github.com/user-attachments/assets/63f95d56-2080-4632-8255-c6df017afaca" width="250" alt="Character Detail"> &nbsp;&nbsp;
 </div>
+
 
 ---
 
