@@ -14,18 +14,20 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.sergiosabater.rickmortypedia.R
 
 @Composable
 fun CustomSearchBar(
     modifier: Modifier = Modifier,
     query: String,
     onQueryChange: (String) -> Unit,
-    placeholder: String = "Search for characters..."
+    placeholder: String = stringResource(R.string.search_for_characters)
 ) {
     OutlinedTextField(
         value = query,
@@ -41,7 +43,7 @@ fun CustomSearchBar(
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Search,
-                contentDescription = "Search",
+                contentDescription = stringResource(R.string.search),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(20.dp)
             )
@@ -53,7 +55,7 @@ fun CustomSearchBar(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Clear search",
+                        contentDescription = stringResource(R.string.clear_search),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(18.dp)
                     )

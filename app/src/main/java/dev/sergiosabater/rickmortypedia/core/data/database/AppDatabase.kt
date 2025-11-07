@@ -2,10 +2,10 @@ package dev.sergiosabater.rickmortypedia.core.data.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import dev.sergiosabater.rickmortypedia.features.character.data.local.CharacterDao
-import dev.sergiosabater.rickmortypedia.features.character.data.local.PaginationInfoDao
-import dev.sergiosabater.rickmortypedia.features.character.data.local.CharacterEntity
-import dev.sergiosabater.rickmortypedia.features.character.data.local.PaginationInfoEntity
+import dev.sergiosabater.rickmortypedia.features.character.data.local.dao.CharacterDao
+import dev.sergiosabater.rickmortypedia.features.character.data.local.dao.PaginationInfoDao
+import dev.sergiosabater.rickmortypedia.features.character.data.local.entity.CharacterEntity
+import dev.sergiosabater.rickmortypedia.features.character.data.local.entity.PaginationInfoEntity
 
 @Database(
     entities = [

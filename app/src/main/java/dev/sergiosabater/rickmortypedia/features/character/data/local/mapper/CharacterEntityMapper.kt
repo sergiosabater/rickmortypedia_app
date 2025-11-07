@@ -1,5 +1,6 @@
-package dev.sergiosabater.rickmortypedia.features.character.data.local
+package dev.sergiosabater.rickmortypedia.features.character.data.local.mapper
 
+import dev.sergiosabater.rickmortypedia.features.character.data.local.entity.CharacterEntity
 import dev.sergiosabater.rickmortypedia.features.character.domain.model.Character
 import dev.sergiosabater.rickmortypedia.features.character.domain.model.CharacterStatus
 

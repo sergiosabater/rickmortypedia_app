@@ -12,9 +12,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.sergiosabater.rickmortypedia.R
 
 @Composable
 fun SpeciesFilterBar(
@@ -35,7 +37,7 @@ fun SpeciesFilterBar(
             .fillMaxWidth()
     ) {
         Text(
-            text = "Filter by Species",
+            text = stringResource(R.string.filter_by_species),
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
             color = MaterialTheme.colorScheme.primaryContainer,
@@ -50,10 +52,10 @@ fun SpeciesFilterBar(
         ) {
             items(
                 items = availableSpecies,
-                key = { it.displayName }
+                key = { it.name }
             ) { species ->
                 SpeciesFilterChip(
-                    species = species.displayName,
+                    speciesFilter = species,
                     isSelected = selectedSpecies == species,
                     onClick = { onSpeciesSelected(species) }
                 )

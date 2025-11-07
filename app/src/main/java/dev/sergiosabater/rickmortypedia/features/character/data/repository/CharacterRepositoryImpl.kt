@@ -1,12 +1,12 @@
-package dev.sergiosabater.rickmortypedia.features.character.data
+package dev.sergiosabater.rickmortypedia.features.character.data.repository
 
 import android.util.Log
 import dev.sergiosabater.rickmortypedia.core.common.error.DomainError
 import dev.sergiosabater.rickmortypedia.core.network.RickAndMortyApiService
-import dev.sergiosabater.rickmortypedia.features.character.data.local.CharacterDao
-import dev.sergiosabater.rickmortypedia.features.character.data.local.CharacterEntityMapper
-import dev.sergiosabater.rickmortypedia.features.character.data.local.PaginationInfoDao
-import dev.sergiosabater.rickmortypedia.features.character.data.local.PaginationInfoEntity
+import dev.sergiosabater.rickmortypedia.features.character.data.local.dao.CharacterDao
+import dev.sergiosabater.rickmortypedia.features.character.data.local.dao.PaginationInfoDao
+import dev.sergiosabater.rickmortypedia.features.character.data.local.entity.PaginationInfoEntity
+import dev.sergiosabater.rickmortypedia.features.character.data.local.mapper.CharacterEntityMapper
 import dev.sergiosabater.rickmortypedia.features.character.data.remote.CharacterMapper
 import dev.sergiosabater.rickmortypedia.features.character.data.remote.PageInfoDto
 import dev.sergiosabater.rickmortypedia.features.character.domain.model.Character
@@ -16,11 +16,6 @@ import io.ktor.client.plugins.ServerResponseException
 import kotlinx.io.IOException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
-import kotlin.collections.isNotEmpty
-import kotlin.collections.map
-import kotlin.let
-import kotlin.text.isNullOrBlank
-import kotlin.to
 
 class CharacterRepositoryImpl(
     private val apiService: RickAndMortyApiService,
@@ -39,7 +34,7 @@ class CharacterRepositoryImpl(
                     if (localCharacters.isNotEmpty()) {
                         Result.success(localCharacters)
                     } else {
-                        Result.failure(DomainError.NoCachedData)
+                        Result.failure(DomainError.NoCachedData())
                     }
                 } else {
                     syncWithApi(page)
@@ -47,7 +42,7 @@ class CharacterRepositoryImpl(
                     if (refreshedCharacters.isNotEmpty()) {
                         Result.success(refreshedCharacters)
                     } else {
-                        Result.failure(DomainError.NoCharactersFound)
+                        Result.failure(DomainError.NoCharactersFound())
                     }
                 }
             } else {
@@ -79,7 +74,7 @@ class CharacterRepositoryImpl(
                 }
 
                 if (successCount == 0) {
-                    return Result.failure(DomainError.SyncFailed)
+                    return Result.failure(DomainError.SyncFailed())
                 }
 
                 // Get all characters from cache
@@ -87,13 +82,13 @@ class CharacterRepositoryImpl(
                 if (allCharacters.isNotEmpty()) {
                     Result.success(allCharacters)
                 } else {
-                    Result.failure(DomainError.NoCharactersFound)
+                    Result.failure(DomainError.NoCharactersFound())
                 }
             }
         } catch (e: DomainError) {
             Result.failure(e)
         } catch (_: Exception) {
-            Result.failure(DomainError.DatabaseError)
+            Result.failure(DomainError.DatabaseError())
         }
     }
 
@@ -122,12 +117,12 @@ class CharacterRepositoryImpl(
                 } else {
                     val exception = apiResult.exceptionOrNull()
                     Result.failure(
-                        exception as? DomainError ?: DomainError.UnknownError
+                        exception as? DomainError ?: DomainError.UnknownError()
                     )
                 }
             }
         } catch (_: Exception) {
-            Result.failure(DomainError.DatabaseError)
+            Result.failure(DomainError.DatabaseError())
         }
     }
 
@@ -139,7 +134,7 @@ class CharacterRepositoryImpl(
         return try {
             // Always search local cache for searches
             if (!hasCachedData()) {
-                return Result.failure(DomainError.NoCachedData)
+                return Result.failure(DomainError.NoCachedData())
             }
 
             val searchResults = when {
@@ -157,10 +152,10 @@ class CharacterRepositoryImpl(
             if (searchResults.isNotEmpty()) {
                 Result.success(searchResults)
             } else {
-                Result.failure(DomainError.NoCharactersFound)
+                Result.failure(DomainError.NoCharactersFound())
             }
         } catch (_: Exception) {
-            Result.failure(DomainError.DatabaseError)
+            Result.failure(DomainError.DatabaseError())
         }
     }
 
@@ -178,7 +173,7 @@ class CharacterRepositoryImpl(
             paginationInfoDao.deletePaginationInfo()
             Result.success(true)
         } catch (_: Exception) {
-            Result.failure(DomainError.DatabaseError)
+            Result.failure(DomainError.DatabaseError())
         }
     }
 
@@ -195,24 +190,24 @@ class CharacterRepositoryImpl(
             val statusCode = e.response.status.value
             val error = when (statusCode) {
                 404 -> characterId?.let { DomainError.CharacterNotFound(it) }
-                    ?: DomainError.NoCharactersFound
+                    ?: DomainError.NoCharactersFound()
 
-                400 -> DomainError.NetworkError  // Bad Request
-                401, 403 -> DomainError.NetworkError  // Unauthorized/Forbidden
-                else -> DomainError.NetworkError
+                400 -> DomainError.NetworkError()  // Bad Request
+                401, 403 -> DomainError.NetworkError()  // Unauthorized/Forbidden
+                else -> DomainError.NetworkError()
             }
             Result.failure(error)
         } catch (_: ServerResponseException) {
-            Result.failure(DomainError.ServerError)
+            Result.failure(DomainError.ServerError())
         } catch (_: UnknownHostException) {
-            Result.failure(DomainError.NetworkError)
+            Result.failure(DomainError.NetworkError())
         } catch (_: SocketTimeoutException) {
-            Result.failure(DomainError.NetworkError)
+            Result.failure(DomainError.NetworkError())
         } catch (_: IOException) {
-            Result.failure(DomainError.NetworkError)
+            Result.failure(DomainError.NetworkError())
         } catch (e: Exception) {
             Log.e("Repository", "Unexpected error: ${e.message}", e)
-            Result.failure(DomainError.UnknownError)
+            Result.failure(DomainError.UnknownError())
         }
     }
 
@@ -261,7 +256,7 @@ class CharacterRepositoryImpl(
                 paginationInfoDao.insertPaginationInfo(paginationInfo)
             }
         } catch (_: Exception) {
-            throw DomainError.DatabaseError
+            throw DomainError.DatabaseError()
         }
     }
 
@@ -270,7 +265,7 @@ class CharacterRepositoryImpl(
             val entity = entityMapper.toEntity(character, 1)
             characterDao.insertCharacter(entity)
         } catch (_: Exception) {
-            throw DomainError.DatabaseError
+            throw DomainError.DatabaseError()
         }
     }
 
@@ -286,13 +281,13 @@ class CharacterRepositoryImpl(
                 if (characters.isNotEmpty()) {
                     saveCharactersToLocal(characters, page, apiResponse.info)
                 } else {
-                    throw DomainError.NoCharactersFound
+                    throw DomainError.NoCharactersFound()
                 }
             }
 
             else -> {
                 val originalError =
-                    apiResult.exceptionOrNull() as? DomainError ?: DomainError.SyncFailed
+                    apiResult.exceptionOrNull() as? DomainError ?: DomainError.SyncFailed()
                 throw originalError
             }
         }

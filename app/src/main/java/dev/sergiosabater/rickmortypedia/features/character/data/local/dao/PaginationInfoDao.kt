@@ -1,9 +1,10 @@
-package dev.sergiosabater.rickmortypedia.features.character.data.local
+package dev.sergiosabater.rickmortypedia.features.character.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import dev.sergiosabater.rickmortypedia.features.character.data.local.entity.PaginationInfoEntity
 
 @Dao
 interface PaginationInfoDao {

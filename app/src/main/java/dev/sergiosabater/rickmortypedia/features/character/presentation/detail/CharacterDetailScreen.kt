@@ -14,10 +14,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -61,41 +61,63 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import dev.sergiosabater.rickmortypedia.features.character.domain.model.Character
-import dev.sergiosabater.rickmortypedia.features.character.domain.model.CharacterStatus
+import dev.sergiosabater.rickmortypedia.R
 import dev.sergiosabater.rickmortypedia.core.ui.theme.RickAndMortyFontFamily
 import dev.sergiosabater.rickmortypedia.core.ui.theme.RickMortyPediaTheme
 import dev.sergiosabater.rickmortypedia.core.ui.theme.StatusAlive
 import dev.sergiosabater.rickmortypedia.core.ui.theme.StatusDead
 import dev.sergiosabater.rickmortypedia.core.ui.theme.StatusUnknown
+import dev.sergiosabater.rickmortypedia.features.character.domain.model.Character
+import dev.sergiosabater.rickmortypedia.features.character.domain.model.CharacterStatus
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun CharacterDetailScreen(
-    uiState: CharacterDetailUiState,
+    characterId: Int,
     onBackClick: () -> Unit,
-    onRetry: () -> Unit
+    viewModel: CharacterDetailViewModel = koinViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var shouldAnimate by remember { mutableStateOf(false) }
 
-    var contentVisible by remember { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-        contentVisible = true
+    LaunchedEffect(characterId) {
+        viewModel.handleIntent(CharacterDetailIntent.LoadCharacter(characterId))
+        shouldAnimate = true
     }
 
+    CharacterDetailContent(
+        uiState = uiState,
+        onBackClick = onBackClick,
+        onRetry = {
+            viewModel.handleIntent(CharacterDetailIntent.RetryLoad)
+        },
+        shouldAnimate = shouldAnimate
+    )
+}
+
+@Composable
+private fun CharacterDetailContent(
+    uiState: CharacterDetailUiState,
+    onBackClick: () -> Unit,
+    onRetry: () -> Unit,
+    shouldAnimate: Boolean
+) {
     Scaffold(
         topBar = {
             CharacterDetailTopBar(
                 characterName = if (uiState is CharacterDetailUiState.Success) {
                     uiState.character.name
                 } else {
-                    "Character Details"
+                    stringResource(R.string.character_details)
                 },
                 onBackClick = onBackClick
             )
@@ -103,7 +125,7 @@ fun CharacterDetailScreen(
     ) { paddingValues ->
 
         AnimatedVisibility(
-            visible = contentVisible,
+            visible = shouldAnimate,
             enter = slideInHorizontally(
                 animationSpec = tween(durationMillis = 400, easing = FastOutSlowInEasing)
             ) + fadeIn(
@@ -135,7 +157,7 @@ fun CharacterDetailScreen(
 
                 is CharacterDetailUiState.Success -> {
                     val character = uiState.character
-                    CharacterDetailContent(
+                    CharacterDetailBody(
                         character = character,
                         modifier = Modifier.padding(paddingValues)
                     )
@@ -147,7 +169,7 @@ fun CharacterDetailScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CharacterDetailTopBar(
+private fun CharacterDetailTopBar(
     characterName: String,
     onBackClick: () -> Unit
 ) {
@@ -167,7 +189,7 @@ fun CharacterDetailTopBar(
             IconButton(onClick = onBackClick) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
+                    contentDescription = stringResource(R.string.back),
                     tint = MaterialTheme.colorScheme.onSurface
                 )
             }
@@ -180,7 +202,7 @@ fun CharacterDetailTopBar(
 }
 
 @Composable
-fun CharacterDetailContent(
+private fun CharacterDetailBody(
     character: Character,
     modifier: Modifier = Modifier
 ) {
@@ -190,18 +212,22 @@ fun CharacterDetailContent(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.colorScheme.background)
+            .navigationBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CharacterDetailHeader(character = character)
         CharacterInfoSection(character = character)
         CharacterLocationsSection(character = character)
-        CharacterEpisodesSection(character = character)
+        CharacterEpisodesSection(
+            modifier = Modifier.padding(bottom = 16.dp),
+            character = character,
+        )
     }
 }
 
 @Composable
-fun CharacterDetailHeader(character: Character) {
+private fun CharacterDetailHeader(character: Character) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -213,7 +239,7 @@ fun CharacterDetailHeader(character: Character) {
                 .data(character.image)
                 .crossfade(true)
                 .build(),
-            contentDescription = "Imagen de ${character.name}",
+            contentDescription = stringResource(R.string.image_of, character.name),
             modifier = Modifier
                 .fillMaxSize()
                 .clip(RoundedCornerShape(12.dp)),
@@ -223,7 +249,7 @@ fun CharacterDetailHeader(character: Character) {
 }
 
 @Composable
-fun CharacterInfoSection(character: Character) {
+private fun CharacterInfoSection(character: Character) {
     var isExpanded by remember { mutableStateOf(false) }
 
     Card(
@@ -231,7 +257,7 @@ fun CharacterInfoSection(character: Character) {
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .clickable { isExpanded = !isExpanded },
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
         )
@@ -245,7 +271,7 @@ fun CharacterInfoSection(character: Character) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Character Info",
+                    text = stringResource(R.string.character_info),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -253,7 +279,11 @@ fun CharacterInfoSection(character: Character) {
 
                 Icon(
                     imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = if (isExpanded) "Collapse" else "Expand",
+                    contentDescription = if (isExpanded)
+                        stringResource(R.string.collapse)
+                    else
+                        stringResource(R.string.expand)
+                    ,
                     tint = MaterialTheme.colorScheme.onSurface
                 )
             }
@@ -268,7 +298,7 @@ fun CharacterInfoSection(character: Character) {
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     InfoRow(
-                        label = "State",
+                        label = stringResource(R.string.state),
                         value = character.status.name,
                         icon = Icons.Default.Favorite,
                         statusColor = when (character.status) {
@@ -279,20 +309,20 @@ fun CharacterInfoSection(character: Character) {
                     )
 
                     InfoRow(
-                        label = "Specie",
-                        value = character.species.ifEmpty { "Unknown" },
+                        label = stringResource(R.string.specie),
+                        value = character.species.ifEmpty { stringResource(R.string.unknown) },
                         icon = Icons.Default.Person
                     )
 
                     InfoRow(
-                        label = "Gender",
-                        value = character.gender.ifEmpty { "Unknown" },
+                        label = stringResource(R.string.gender),
+                        value = character.gender.ifEmpty { stringResource(R.string.unknown_value) },
                         icon = Icons.Default.Face
                     )
 
                     if (character.type.isNotEmpty()) {
                         InfoRow(
-                            label = "Type",
+                            label = stringResource(R.string.type),
                             value = character.type,
                             icon = Icons.Default.Info
                         )
@@ -304,7 +334,7 @@ fun CharacterInfoSection(character: Character) {
 }
 
 @Composable
-fun CharacterLocationsSection(character: Character) {
+private fun CharacterLocationsSection(character: Character) {
     var isExpanded by remember { mutableStateOf(false) }
 
     Card(
@@ -312,7 +342,7 @@ fun CharacterLocationsSection(character: Character) {
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .clickable { isExpanded = !isExpanded },
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
         )
@@ -326,7 +356,7 @@ fun CharacterLocationsSection(character: Character) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Locations",
+                    text = stringResource(R.string.locations),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -334,7 +364,9 @@ fun CharacterLocationsSection(character: Character) {
 
                 Icon(
                     imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = if (isExpanded) "Collapse" else "Expand",
+                    contentDescription = if (isExpanded) stringResource(R.string.collapse_description) else
+                        stringResource(R.string.expand_value)
+                    ,
                     tint = MaterialTheme.colorScheme.onSurface
                 )
             }
@@ -349,14 +381,14 @@ fun CharacterLocationsSection(character: Character) {
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     InfoRow(
-                        label = "Origin",
-                        value = character.origin.ifEmpty { "Unknown" },
+                        label = stringResource(R.string.origin),
+                        value = character.origin.ifEmpty { stringResource(R.string.unknown_value) },
                         icon = Icons.Default.Place
                     )
 
                     InfoRow(
-                        label = "Current location",
-                        value = character.location.ifEmpty { "Unknown" },
+                        label = stringResource(R.string.current_location),
+                        value = character.location.ifEmpty { stringResource(R.string.unknown_value) },
                         icon = Icons.Default.LocationOn
                     )
                 }
@@ -366,15 +398,18 @@ fun CharacterLocationsSection(character: Character) {
 }
 
 @Composable
-fun CharacterEpisodesSection(character: Character) {
+private fun CharacterEpisodesSection(
+    modifier: Modifier = Modifier,
+    character: Character,
+) {
     var isExpanded by remember { mutableStateOf(false) }
 
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .clickable { isExpanded = !isExpanded },
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
         )
@@ -388,7 +423,7 @@ fun CharacterEpisodesSection(character: Character) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Episodes",
+                    text = stringResource(R.string.episodes),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -396,7 +431,10 @@ fun CharacterEpisodesSection(character: Character) {
 
                 Icon(
                     imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = if (isExpanded) "Collapse" else "Expand",
+                    contentDescription = if (isExpanded) stringResource(R.string.collapse_value)
+                    else
+                        stringResource(R.string.expand_value)
+                    ,
                     tint = MaterialTheme.colorScheme.onSurface
                 )
             }
@@ -411,7 +449,7 @@ fun CharacterEpisodesSection(character: Character) {
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Text(
-                        text = "Appears in ${character.episodeCount} episodes",
+                        text = stringResource(R.string.appears_in_episodes, character.episodeCount),
                         fontSize = 16.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -422,7 +460,7 @@ fun CharacterEpisodesSection(character: Character) {
 }
 
 @Composable
-fun InfoRow(
+private fun InfoRow(
     label: String,
     value: String,
     icon: ImageVector,
@@ -460,7 +498,7 @@ fun InfoRow(
 }
 
 @Composable
-fun ErrorDetailState(
+private fun ErrorDetailState(
     errorMessage: String,
     onRetry: () -> Unit,
     onBackClick: () -> Unit,
@@ -474,32 +512,31 @@ fun ErrorDetailState(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
+            modifier = Modifier
+                .size(64.dp)
+                .padding(bottom = 16.dp),
             imageVector = Icons.Default.Close,
-            contentDescription = "Error",
-            tint = MaterialTheme.colorScheme.error,
-            modifier = Modifier.size(64.dp)
+            contentDescription = stringResource(R.string.error),
+            tint = MaterialTheme.colorScheme.error
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
-
         Text(
-            text = "Error al cargar el personaje",
+            text = stringResource(R.string.error_loading_character),
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface
         )
 
         Text(
+            modifier = Modifier.padding(horizontal = 32.dp, vertical = 8.dp),
             text = errorMessage,
             fontSize = 14.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 32.dp, vertical = 8.dp)
+            textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
-
         Row(
+            modifier = Modifier.padding(top = 24.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Button(
@@ -509,14 +546,14 @@ fun ErrorDetailState(
                 )
             ) {
                 Text(
-                    "Retry",
+                    stringResource(R.string.retry),
                     color = MaterialTheme.colorScheme.onPrimary
                 )
             }
 
             TextButton(onClick = onBackClick) {
                 Text(
-                    "Back",
+                    stringResource(R.string.back),
                     color = MaterialTheme.colorScheme.primary
                 )
             }
@@ -549,7 +586,7 @@ fun PreviewCharacterDetailScreen() {
                 )
             }
         ) { paddingValues ->
-            CharacterDetailContent(
+            CharacterDetailBody(
                 character = sampleCharacter,
                 modifier = Modifier.padding(paddingValues)
             )

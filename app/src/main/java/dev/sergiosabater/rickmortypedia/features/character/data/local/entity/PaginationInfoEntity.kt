@@ -1,4 +1,4 @@
-package dev.sergiosabater.rickmortypedia.features.character.data.local
+package dev.sergiosabater.rickmortypedia.features.character.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
