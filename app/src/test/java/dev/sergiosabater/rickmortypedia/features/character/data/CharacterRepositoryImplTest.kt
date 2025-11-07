@@ -1,14 +1,15 @@
 package dev.sergiosabater.rickmortypedia.features.character.data
 
 import dev.sergiosabater.rickmortypedia.core.network.RickAndMortyApiService
-import dev.sergiosabater.rickmortypedia.features.character.data.local.CharacterDao
-import dev.sergiosabater.rickmortypedia.features.character.data.local.CharacterEntity
-import dev.sergiosabater.rickmortypedia.features.character.data.local.CharacterEntityMapper
-import dev.sergiosabater.rickmortypedia.features.character.data.local.PaginationInfoDao
+import dev.sergiosabater.rickmortypedia.features.character.data.local.dao.CharacterDao
+import dev.sergiosabater.rickmortypedia.features.character.data.local.entity.CharacterEntity
+import dev.sergiosabater.rickmortypedia.features.character.data.local.mapper.CharacterEntityMapper
+import dev.sergiosabater.rickmortypedia.features.character.data.local.dao.PaginationInfoDao
 import dev.sergiosabater.rickmortypedia.features.character.data.remote.CharacterDto
 import dev.sergiosabater.rickmortypedia.features.character.data.remote.CharacterMapper
 import dev.sergiosabater.rickmortypedia.features.character.data.remote.CharactersResponseDto
 import dev.sergiosabater.rickmortypedia.features.character.data.remote.PageInfoDto
+import dev.sergiosabater.rickmortypedia.features.character.data.repository.CharacterRepositoryImpl
 import dev.sergiosabater.rickmortypedia.util.ViewModelTest
 import dev.sergiosabater.rickmortypedia.util.fixtures.CharacterTestFixtures
 import kotlinx.coroutines.ExperimentalCoroutinesApi

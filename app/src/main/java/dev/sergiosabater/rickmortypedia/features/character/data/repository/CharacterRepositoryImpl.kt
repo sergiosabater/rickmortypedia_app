@@ -1,12 +1,12 @@
-package dev.sergiosabater.rickmortypedia.features.character.data
+package dev.sergiosabater.rickmortypedia.features.character.data.repository
 
 import android.util.Log
 import dev.sergiosabater.rickmortypedia.core.common.error.DomainError
 import dev.sergiosabater.rickmortypedia.core.network.RickAndMortyApiService
-import dev.sergiosabater.rickmortypedia.features.character.data.local.CharacterDao
-import dev.sergiosabater.rickmortypedia.features.character.data.local.CharacterEntityMapper
-import dev.sergiosabater.rickmortypedia.features.character.data.local.PaginationInfoDao
-import dev.sergiosabater.rickmortypedia.features.character.data.local.PaginationInfoEntity
+import dev.sergiosabater.rickmortypedia.features.character.data.local.dao.CharacterDao
+import dev.sergiosabater.rickmortypedia.features.character.data.local.dao.PaginationInfoDao
+import dev.sergiosabater.rickmortypedia.features.character.data.local.entity.PaginationInfoEntity
+import dev.sergiosabater.rickmortypedia.features.character.data.local.mapper.CharacterEntityMapper
 import dev.sergiosabater.rickmortypedia.features.character.data.remote.CharacterMapper
 import dev.sergiosabater.rickmortypedia.features.character.data.remote.PageInfoDto
 import dev.sergiosabater.rickmortypedia.features.character.domain.model.Character
@@ -16,11 +16,6 @@ import io.ktor.client.plugins.ServerResponseException
 import kotlinx.io.IOException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
-import kotlin.collections.isNotEmpty
-import kotlin.collections.map
-import kotlin.let
-import kotlin.text.isNullOrBlank
-import kotlin.to
 
 class CharacterRepositoryImpl(
     private val apiService: RickAndMortyApiService,

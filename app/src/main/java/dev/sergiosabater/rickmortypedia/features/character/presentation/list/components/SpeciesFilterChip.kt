@@ -51,7 +51,7 @@ fun SpeciesFilterChip(
         targetValue = if (isSelected)
             Color.Transparent
         else
-            MaterialTheme.colorScheme.outline,
+            MaterialTheme.colorScheme.primary,
         animationSpec = tween(durationMillis = 300),
         label = "border_color"
     )
@@ -93,10 +93,4 @@ enum class SpeciesFilter(val displayName: String, val filterValue: String?) {
     HUMANOID("Humanoid", "Humanoid"),
     ROBOT("Robot", "Robot"),
     ANIMAL("Animal", "Animal");
-
-    companion object {
-        fun fromFilterValue(value: String?): SpeciesFilter {
-            return values().find { it.filterValue == value } ?: ALL
-        }
-    }
 }
