@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -21,9 +22,11 @@ import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -65,6 +68,7 @@ fun CharactersListScreen(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CharactersListContent(
     characters: List<Character>,
@@ -78,42 +82,48 @@ private fun CharactersListContent(
     val selectedSpecies = uiState.selectedSpecies
     val uiStatus = uiState.uiStatus
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        when (uiStatus) {
-            is CharactersListUiStatus.Loading -> {
-                LoadingState()
-            }
-
-            is CharactersListUiStatus.Success -> {
-                SuccessState(
-                    characters = characters,
-                    searchQuery = searchQuery,
-                    selectedSpecies = selectedSpecies,
-                    isDarkTheme = isDarkTheme,
-                    onSearchQueryChange = { query ->
-                        onIntent(CharactersListIntent.SearchQueryChanged(query))
-                    },
-                    onCharacterClick = onCharacterClick,
-                    onThemeToggle = onThemeToggle,
-                    onSpeciesSelected = { species ->
-                        onIntent(CharactersListIntent.SpeciesFilterChanged(species))
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        content = { innerPadding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .background(MaterialTheme.colorScheme.background)
+            ) {
+                when (uiStatus) {
+                    is CharactersListUiStatus.Loading -> {
+                        LoadingState()
                     }
-                )
-            }
 
-            is CharactersListUiStatus.Error -> {
-                ErrorState(
-                    onRetry = {
-                        onIntent(CharactersListIntent.RetryLoading)
+                    is CharactersListUiStatus.Success -> {
+                        SuccessState(
+                            characters = characters,
+                            searchQuery = searchQuery,
+                            selectedSpecies = selectedSpecies,
+                            isDarkTheme = isDarkTheme,
+                            onSearchQueryChange = { query ->
+                                onIntent(CharactersListIntent.SearchQueryChanged(query))
+                            },
+                            onCharacterClick = onCharacterClick,
+                            onThemeToggle = onThemeToggle,
+                            onSpeciesSelected = { species ->
+                                onIntent(CharactersListIntent.SpeciesFilterChanged(species))
+                            }
+                        )
                     }
-                )
+
+                    is CharactersListUiStatus.Error -> {
+                        ErrorState(
+                            onRetry = {
+                                onIntent(CharactersListIntent.RetryLoading)
+                            }
+                        )
+                    }
+                }
             }
         }
-    }
+    )
 }
 
 @Composable
@@ -140,7 +150,9 @@ private fun SuccessState(
     onSpeciesSelected: (SpeciesFilter) -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
     ) {
         HeaderSection(
             isDarkTheme = isDarkTheme,
@@ -181,14 +193,14 @@ private fun HeaderSection(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 64.dp, bottom = 16.dp)
+            .padding(top = 16.dp, bottom = 16.dp)
     ) {
         Image(
             painter = painterResource(id = R.drawable.ic_logo),
             contentDescription = "Rick and Morty Logo",
             contentScale = ContentScale.Fit,
             modifier = Modifier
-                .padding(top = 64.dp)
+                .padding(top = 16.dp)
                 .align(Alignment.Center)
         )
 
@@ -210,7 +222,11 @@ private fun CharactersList(
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = 16.dp),
+        contentPadding = PaddingValues(
+            start = 16.dp,
+            end = 16.dp,
+            bottom = 16.dp
+        ),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(

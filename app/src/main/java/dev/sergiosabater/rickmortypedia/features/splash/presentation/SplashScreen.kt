@@ -8,8 +8,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -66,43 +69,50 @@ private fun SplashContent(
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(24.dp)
-        ) {
-
-            Image(
-                painter = painterResource(R.drawable.loading),
-                contentDescription = "Rick and Morty",
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        content = { paddingValues ->
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth(1f)
-                    .aspectRatio(1f),
-                contentScale = ContentScale.Fit
-            )
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .background(Color.White),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(24.dp),
+                    modifier = Modifier.padding(horizontal = 32.dp)
+                ) {
 
-            CircularProgressIndicator(
-                modifier = Modifier.size(51.dp),
-                color = Color(0xFF00FF00),
-                strokeWidth = 4.dp
-            )
+                    Image(
+                        painter = painterResource(R.drawable.loading),
+                        contentDescription = "Rick and Morty",
+                        modifier = Modifier
+                            .fillMaxWidth(1f)
+                            .aspectRatio(1f),
+                        contentScale = ContentScale.Fit
+                    )
 
-            Text(
-                text = "Loading...",
-                color = Color.Black,
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Medium
-            )
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(51.dp),
+                        color = MaterialTheme.colorScheme.primary,
+                        strokeWidth = 4.dp
+                    )
+
+                    Text(
+                        text = "Loading...",
+                        color = Color.Black,
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
         }
-    }
+    )
 }
 
-@Preview
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PreviewSplashScreenLoading() {
     RickMortyPediaTheme {

@@ -1,6 +1,5 @@
 package dev.sergiosabater.rickmortypedia.core.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.updateTransition
@@ -11,15 +10,11 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.core.view.WindowCompat
 import dev.sergiosabater.rickmortypedia.R
 
 val LightColorScheme = lightColorScheme(
@@ -135,15 +130,6 @@ fun RickMortyPediaTheme(
         onBackground = onBackground,
         onSurface = onSurface
     )
-
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        LaunchedEffect(background) {
-            val window = (view.context as Activity).window
-            window.statusBarColor = background.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
-        }
-    }
 
     MaterialTheme(
         colorScheme = animatedColorScheme,
